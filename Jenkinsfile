@@ -1,11 +1,6 @@
 pipeline {
    agent any
 
-   environment { 
-      DOCKER_IMAGE = 'adamko034/jenkins-course:2026_2' 
-      CLAIR_URL = 'http://localhost:6060' 
-   }
-
    stages {
       stage('Verify Branch') {
          steps {
@@ -50,43 +45,26 @@ pipeline {
             dir("$WORKSPACE/azure-vote") {
                script {
                   docker.withRegistry('', 'dockerhub-cred') {
-                     def image = docker.build("${DOCKER_IMAGE}")
+                     def image = docker.build('adamko034/jenkins-course:2026_3')
                      image.push()
                   }
                }
             }
          }
       }
-      stage('Wait for Clair') { 
-         steps { 
-            sh ''' 
-               echo "Waiting for Clair..." 
-               for i in $(seq 1 30); do 
-                  if docker exec clair curl -fs http://localhost:6060/health > /dev/null 2>&1; then 
-                     echo "Clair is ready" exit 0 
-                  fi 
-                     echo "Clair not ready yet..." 
-                     sleep 5 
-                  done 
-                  
-                  echo "Clair did not become ready" 
-                  docker logs clair --tail 100 
-                  exit 1 
-               ''' 
-         } 
-      } 
-      stage('Clair Scan') { 
-         steps { 
-            sh ''' 
-               echo "Scanning ${DOCKER_IMAGE} with Clair..." 
-               docker exec clair clairctl report --host ${CLAIR_URL} ${DOCKER_IMAGE} 
-               ''' 
-         } 
+      stage('Docker Scan with Grype') {
+         steps {
+            grypeScan autoInstall: false, repName: 'grypeReport_${JOB_NAME}_${BUILD_NUMBER}.txt', scanDest: 'registry:adamko034/jenkins-course:2026_3'
+         }
       }
    }
    post {
       always {
          sh(script: 'docker compose down')
+         recordIssues(
+            tools: [grype()],
+            aggregationResults: true,
+         )
       }
    }
 }
