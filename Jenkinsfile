@@ -63,7 +63,7 @@ pipeline {
          sh(script: 'docker compose down')
          recordIssues(
             tools: [grype()],
-            aggregationResults: true,
+            aggregatingResults: true,
          )
       }
    }
