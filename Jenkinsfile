@@ -79,9 +79,7 @@ pipeline {
          steps { 
             sh ''' 
                echo "Scanning ${DOCKER_IMAGE} with Clair..." 
-               docker exec clair clairctl report \ 
-                  --host ${CLAIR_URL} \ 
-                  ${DOCKER_IMAGE} 
+               docker exec clair clairctl report --host ${CLAIR_URL} ${DOCKER_IMAGE} 
                ''' 
          } 
       }
