@@ -30,6 +30,15 @@ pipeline {
             }
          }
       }
+      stage('Debug') {
+         steps {
+            sh '''
+                  pwd
+                  ls -la
+                  find . -name Dockerfile -type f
+            '''
+         }
+      }
       stage('Docker Push') {
          steps {
             echo "Running in $WORKSPACE"
