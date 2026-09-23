@@ -32,11 +32,11 @@ pipeline {
       }
       stage('Docker Push') {
          steps {
-            echo "Runnning in $WORKSPACE"
+            echo "Running in $WORKSPACE"
             dir("$WORKSPACE/azure-vote") {
                script {
                   docker.withRegistry('', 'dockerhub') {
-                     def image = docker.build('blackdentech/jenkins-course:2023')
+                     def image = docker.build('adamko034/jenkins-course:2026_1')
                      image.push()
                   }
                }
