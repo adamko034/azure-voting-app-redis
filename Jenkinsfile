@@ -54,7 +54,7 @@ pipeline {
       }
       stage('Docker Scan with Grype') {
          steps {
-            grypeScan autoInstall: false, repName: 'grypeReport_${JOB_NAME}_${BUILD_NUMBER}.txt', scanDest: 'registry:adamko034/jenkins-course:2026_3'
+            grypeScan autoInstall: true, repName: 'grypeReport_${JOB_NAME}_${BUILD_NUMBER}.txt', scanDest: 'registry:adamko034/jenkins-course:2026_3'
          }
       }
    }
