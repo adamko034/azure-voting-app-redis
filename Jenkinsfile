@@ -30,6 +30,38 @@ pipeline {
             }
          }
       }
+      stage ('Parallel') {
+         parallel {
+            stage('parallel 1') {
+               steps {
+                  echo "Running parallel 1"
+                  sleep time: 60, unit: 'SECONDS'
+                  echo "Finished parallel 1"
+               }
+            }
+            stage('parallel 2') {
+               steps {
+                  echo "Running parallel 2"
+                  sleep time: 45, unit: 'SECONDS'
+                  echo "Finished parallel 2"
+               }
+            }
+            stage('parallel 3') {
+               steps {
+                  echo "Running parallel 3"
+                  sleep time: 15, unit: 'SECONDS'
+                  echo "Finished parallel 3"
+               }
+            }
+            stage('parallel 4') {
+               steps {
+                  echo "Running parallel 4"
+                  sleep time: 80, unit: 'SECONDS'
+                  echo "Finished parallel 4"
+               }
+            }
+         }
+      }
       stage('Debug') {
          steps {
             sh '''
