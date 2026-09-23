@@ -42,7 +42,7 @@ pipeline {
       stage('Docker Push') {
          steps {
             echo "Running in $WORKSPACE"
-            dir("$WORKSPACE/azure-voting-app-redis/azure-vote") {
+            dir("$WORKSPACE/azure-vote") {
                script {
                   docker.withRegistry('', 'dockerhub-cred') {
                      def image = docker.build('adamko034/jenkins-course:2026_1')
