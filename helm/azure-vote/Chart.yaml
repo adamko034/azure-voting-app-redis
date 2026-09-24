@@ -1,0 +1,6 @@
+apiVersion: v2
+name: azure-vote
+description: Azure Voting App with Redis backend
+type: application
+version: 0.1.0
+appVersion: "v1"

@@ -36,7 +36,7 @@ pipeline {
             dir("$WORKSPACE/azure-vote") {
                script {
                   docker.withRegistry('', 'dockerhub') {
-                     def image = docker.build('blackdentech/jenkins-course:2023')
+                     def image = docker.build('adamko034/jenkins-course:0.0.1')
                      image.push()
                   }
                }
@@ -45,13 +45,17 @@ pipeline {
       }
       stage('QA Deploy') {
          environment {
-            KUBECONFIG = credentials('qa-kubeconfig')
+            KUBECONFIG = credentials('minikube-kubeconfig')
          }
          when {
             branch 'feature/k8s-deploy'
          }
          steps {
-            sh "kubectl apply -f azure-vote-all-in-one-redis.yaml --kubeconfig $KUBECONFIG"
+            sh '''
+               helm upgrade --install azure-vote ./helm/azure-vote \
+                 -n azure-vote-qa \
+                 -f ./helm/azure-vote/values-qa.yaml
+            '''
          }
       }
       stage('Approve Deploy to PROD') {
@@ -67,13 +71,17 @@ pipeline {
       }
       stage('PROD Deploy') {
          environment {
-            KUBECONFIG = credentials('prod-kubeconfig')
+            KUBECONFIG = credentials('minikube-kubeconfig')
          }
          when {
             branch 'feature/k8s-deploy'
          }
          steps {
-            sh "kubectl apply -f azure-vote-all-in-one-redis.yaml --kubeconfig $KUBECONFIG"
+            sh '''
+               helm upgrade --install azure-vote ./helm/azure-vote \
+                 -n azure-vote-prod \
+                 -f ./helm/azure-vote/values-prod.yaml
+            '''
          }
       }
    }

@@ -1,0 +1,36 @@
+backend:
+  name: azure-vote-back
+  replicas: 1
+  image:
+    repository: mcr.microsoft.com/oss/bitnami/redis
+    tag: "6.0.8"
+    pullPolicy: IfNotPresent
+  service:
+    port: 6379
+  env:
+    ALLOW_EMPTY_PASSWORD: "yes"
+  nodeSelector:
+    kubernetes.io/os: linux
+
+frontend:
+  name: azure-vote-front
+  replicas: 1
+  image:
+    repository: mcr.microsoft.com/azuredocs/azure-vote-front
+    tag: "v1"
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 80
+  resources:
+    requests:
+      cpu: 250m
+    limits:
+      cpu: 500m
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  nodeSelector:
+    kubernetes.io/os: linux

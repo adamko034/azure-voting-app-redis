@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "azure-vote.backend.name" . }}
+  labels:
+    {{- include "azure-vote.labels" . | nindent 4 }}
+    app: {{ include "azure-vote.backend.name" . }}
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app: {{ include "azure-vote.backend.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "azure-vote.backend.name" . }}
+    spec:
+      {{- with .Values.backend.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ include "azure-vote.backend.name" . }}
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+        env:
+        {{- range $key, $value := .Values.backend.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        ports:
+        - containerPort: {{ .Values.backend.service.port }}
+          name: redis

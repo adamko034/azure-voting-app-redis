@@ -1,0 +1,18 @@
+# Prod environment overrides
+backend:
+  replicas: 2
+
+frontend:
+  replicas: 3
+  service:
+    type: LoadBalancer
+  resources:
+    requests:
+      cpu: 250m
+    limits:
+      cpu: 500m
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  minReadySeconds: 10

@@ -1,0 +1,13 @@
+# QA environment overrides
+backend:
+  replicas: 1
+
+frontend:
+  replicas: 1
+  service:
+    type: LoadBalancer
+  resources:
+    requests:
+      cpu: 100m
+    limits:
+      cpu: 250m
